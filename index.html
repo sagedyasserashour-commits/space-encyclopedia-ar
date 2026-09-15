@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>موسوعة الفضاء</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#030615;color:#fff;font-family:Arial,Tahoma,sans-serif}
+header{padding:28px 15px;text-align:center;background:linear-gradient(135deg,#10184a,#42106c)}
+header h1{margin:0 0 8px;font-size:34px} header p{color:#cbd3ef}
+nav{position:sticky;top:0;z-index:10;display:flex;gap:7px;justify-content:center;flex-wrap:wrap;padding:10px;background:#070b1d}
+nav button,.btn{border:0;border-radius:25px;padding:10px 15px;background:#18234d;color:white;cursor:pointer}
+nav button.active,nav button:hover,.btn{background:#7357ff}
+main{width:min(1100px,94%);margin:25px auto 50px}
+.page{display:none}.page.active{display:block}
+.panel,.card{background:#0b1230;border:1px solid #2c3970;border-radius:20px}
+.panel{padding:24px;margin-bottom:20px}.panel p,.card p{color:#c1c9e5;line-height:1.9}
+.hero{text-align:center;padding:42px 20px}
+.search{display:flex;gap:10px;margin:20px auto;max-width:850px}
+.search input{flex:1;padding:14px 18px;border-radius:28px;border:1px solid #43518b;background:#070d25;color:#fff;font-size:16px}
+.search button{padding:0 24px;border:0;border-radius:28px;background:#7357ff;color:#fff}
+.results{display:none;padding:18px;border:1px solid #624fe0;border-radius:18px;background:#0c1535}
+.results.show{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{overflow:hidden;cursor:pointer}.card:hover{border-color:#8069ff;transform:translateY(-3px)}
+.card-body{padding:18px}.planet-art{height:175px;display:grid;place-items:center;background:radial-gradient(circle,#1d2f70,#05091c 68%)}
+.planet{width:105px;height:105px;border-radius:50%;box-shadow:inset -18px -14px 25px #0008,0 0 30px #fff2}
+.mercury{background:radial-gradient(circle at 30% 25%,#ddd5ca,#77736e 50%,#45413f)}
+.venus{background:radial-gradient(circle at 30% 25%,#fff0a0,#d8954c 50%,#87451f)}
+.earth{background:radial-gradient(circle at 30% 25%,#6ee3ff,#176fc7 48%,#063a78)}
+.mars{background:radial-gradient(circle at 30% 25%,#ff9c67,#b8482a 50%,#651d16)}
+.jupiter{width:135px;height:135px;background:repeating-linear-gradient(0deg,#9c5e39 0 9px,#dfb17d 9px 18px,#82472e 18px 27px)}
+.saturn{background:linear-gradient(#d9b982,#8c663d)}
+.saturn:after{content:"";position:absolute;width:180px;height:55px;border:10px solid #c4a16e;border-radius:50%;transform:rotate(-15deg)}
+.uranus{background:#81dce1}.neptune{background:#3977dc}
+.sun{background:radial-gradient(circle at 32% 28%,#fffbd0,#ffd43c 48%,#ff6900 80%);box-shadow:0 0 45px #ffae2c}
+.detail{display:grid;grid-template-columns:280px 1fr;gap:25px;align-items:center}
+.detail-art{height:280px;display:grid;place-items:center;border-radius:20px;background:radial-gradient(circle,#263d87,#070c22 68%)}
+.detail-art .planet{transform:scale(1.5)}
+.factgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.fact{padding:14px;background:#111a3d;border:1px solid #2b3765;border-radius:14px;text-align:center;color:#ccd4ed}
+.fact strong{display:block;color:#aa9cff;margin-bottom:5px}
+.moon{display:inline-block;margin:5px;padding:8px 12px;border-radius:18px;background:#172149;border:1px solid #34416f}
+.back{margin-bottom:15px}
+footer{text-align:center;padding:25px;color:#929cbe;background:#070b1d}
+@media(max-width:650px){.search{flex-direction:column}.search button{height:48px}.detail{grid-template-columns:1fr}.detail-art{height:220px}nav button{font-size:13px;padding:9px 11px}}
+</style>
+</head>
+<body>
+<header><h1>🌌 موسوعة الفضاء</h1><p>نسخة تفاعلية تعمل بدون مكتبات خارجية</p></header>
+
+<nav id="nav">
+<button data-page="home" class="active">الرئيسية</button>
+<button data-page="planets">🪐 الكواكب</button>
+<button data-page="stars">⭐ النجوم</button>
+<button data-page="galaxies">🌌 المجرات</button>
+<button data-page="blackholes">🕳️ الثقوب السوداء</button>
+<button data-page="sun">☀️ الشمس</button>
+<button data-page="missions">🚀 المهمات</button>
+<button data-page="nasa">🔵 NASA</button>
+<button data-page="universe">🔭 الكون</button>
+</nav>
+
+<main>
+<section id="home" class="page active">
+<div class="panel hero">
+<h2>🚀 مرحبًا بك في موسوعة الفضاء</h2>
+<p>ابحث عن كوكب أو قمر أو مهمة، أو اختر أي قسم من القائمة.</p>
+</div>
+<div class="search">
+<input id="search" type="search" placeholder="مثال: المريخ، الأرض، تيتان، ناسا، جيمس ويب">
+<button id="searchBtn">بحث</button>
+</div>
+<div id="results" class="results"></div>
+<h2 style="text-align:center">✨ استكشف</h2>
+<div class="cards">
+<div class="card" data-page="planets"><div class="planet-art"><div class="planet earth"></div></div><div class="card-body"><h3>🪐 الكواكب</h3><p>الكواكب الثمانية وتفاصيلها وأشهر أقمارها.</p></div></div>
+<div class="card" data-page="stars"><div class="planet-art"><div class="planet sun"></div></div><div class="card-body"><h3>⭐ النجوم</h3><p>معلومات عن النجوم وكيف تنتج الطاقة.</p></div></div>
+<div class="card" data-page="galaxies"><div class="planet-art">🌌</div><div class="card-body"><h3>🌌 المجرات</h3><p>درب التبانة وأندروميدا وأنواع المجرات.</p></div></div>
+<div class="card" data-page="missions"><div class="planet-art">🚀</div><div class="card-body"><h3>🚀 المهمات</h3><p>مهمات فضائية شهيرة.</p></div></div>
+</div>
+</section>
+
+<section id="planets" class="page">
+<button class="btn back" data-page="home">← الرئيسية</button>
+<div class="panel"><h2>🪐 كواكب النظام الشمسي</h2><p>ثمانية كواكب تدور حول الشمس.</p></div>
+<div id="planetCards" class="cards"></div>
+</section>
+
+<section id="planetDetail" class="page">
+<button id="planetBack" class="btn back">← رجوع للكواكب</button>
+<div id="planetDetailContent"></div>
+</section>
+
+<section id="stars" class="page"><button class="btn back" data-page="home">← رجوع</button><div class="panel"><h2>⭐ النجوم</h2><p>النجوم كرات ضخمة من البلازما تنتج الطاقة في داخلها بالاندماج النووي. الشمس أقرب نجم إلى الأرض.</p><div class="factgrid"><div class="fact"><strong>☀️ الشمس</strong>أقرب نجم</div><div class="fact"><strong>⭐ سيريوس</strong>من ألمع نجوم السماء ليلًا</div><div class="fact"><strong>🔥 الاندماج</strong>مصدر طاقة النجوم</div></div></div></section>
+
+<section id="galaxies" class="page"><button class="btn back" data-page="home">← رجوع</button><div class="panel"><h2>🌌 المجرات</h2><p>المجرات تجمعات هائلة من النجوم والغاز والغبار والمادة المظلمة مرتبطة بالجاذبية.</p><div class="cards"><div class="card"><div class="card-body"><h3>درب التبانة</h3><p>المجرة التي يوجد فيها النظام الشمسي.</p></div></div><div class="card"><div class="card-body"><h3>أندروميدا</h3><p>مجرة حلزونية كبيرة وقريبة نسبيًا من درب التبانة.</p></div></div></div></div></section>
+
+<section id="blackholes" class="page"><button class="btn back" data-page="home">← رجوع</button><div class="panel"><h2>🕳️ الثقوب السوداء</h2><p>مناطق من الزمكان تكون الجاذبية فيها شديدة جدًا بحيث لا يستطيع الضوء الإفلات بعد عبور أفق الحدث.</p></div></section>
+
+<section id="sun" class="page"><button class="btn back" data-page="home">← رجوع</button><div class="panel detail"><div class="detail-art"><div class="planet sun"></div></div><div><h2>☀️ الشمس</h2><p>نجم من النوع G يقع في مركز النظام الشمسي.</p><div class="factgrid"><div class="fact"><strong>≈ 1.39 مليون كم</strong>القطر</div><div class="fact"><strong>≈ 150 مليون كم</strong>بعدها المتوسط عن الأرض</div><div class="fact"><strong>≈ 4.6 مليار سنة</strong>العمر</div><div class="fact"><strong>≈ 5500°C</strong>حرارة السطح</div></div></div></div></section>
+
+<section id="missions" class="page"><button class="btn back" data-page="home">← رجوع</button><div class="panel"><h2>🚀 المهمات الفضائية</h2><div class="mission"><h3>🌙 Artemis</h3><p>برنامج لاستكشاف القمر وتطوير قدرات الرحلات البشرية.</p></div><div class="mission"><h3>🔴 Perseverance</h3><p>مركبة جوالة على المريخ تدرس جيولوجيته وتبحث عن دلائل على حياة قديمة.</p></div><div class="mission"><h3>☀️ Parker Solar Probe</h3><p>مهمة لدراسة الشمس عن قرب.</p></div><div class="mission"><h3>🧊 Europa Clipper</h3><p>مهمة لدراسة قمر المشتري أوروبا.</p></div><div class="mission"><h3>☄️ DART</h3><p>اختبار تقنية الاصطدام الحركي لتغيير حركة كويكب.</p></div><div class="mission"><h3>🔭 James Webb</h3><p>مرصد فضائي يعمل بالأشعة تحت الحمراء.</p></div></div></section>
+
+<section id="nasa" class="page"><button class="btn back" data-page="home">← رجوع</button><div class="panel"><h2>🔵 NASA</h2><p>الإدارة الوطنية للملاحة الجوية والفضاء في الولايات المتحدة، وتنفذ برامج علمية واستكشافية في الجو والفضاء.</p></div></section>
+
+<section id="universe" class="page"><button class="btn back" data-page="home">← رجوع</button><div class="panel"><h2>🔭 الكون</h2><h3>🌠 الانفجار العظيم</h3><p>تشير الأدلة إلى أن الكون المبكر كان شديد الحرارة والكثافة ثم تمدد.</p><h3>🌌 المادة المظلمة</h3><p>مكوّن لا نراه مباشرة، لكن نرصد آثاره الجاذبية.</p><h3>⚡ الطاقة المظلمة</h3><p>مصطلح مرتبط بالتسارع المرصود في تمدد الكون.</p></div></section>
+</main>
+<footer>🚀 موسوعة الفضاء — نسخة تعليمية تفاعلية</footer>
+
+<script>
+"use strict";
+
+var pages = ["home","planets","planetDetail","stars","galaxies","blackholes","sun","missions","nasa","universe"];
+
+var planets = [
+ {name:"عطارد",en:"Mercury",cls:"mercury",type:"كوكب صخري",distance:"57.9 مليون كم",year:"88 يومًا",day:"58.6 يومًا",moons:["لا توجد أقمار طبيعية معروفة"],desc:"أقرب كواكب النظام الشمسي إلى الشمس وأصغر كواكبه الثمانية."},
+ {name:"الزهرة",en:"Venus",cls:"venus",type:"كوكب صخري",distance:"108.2 مليون كم",year:"224.7 يومًا",day:"243 يومًا",moons:["لا توجد أقمار طبيعية معروفة"],desc:"ثاني الكواكب من الشمس، وله غلاف جوي كثيف غني بثاني أكسيد الكربون."},
+ {name:"الأرض",en:"Earth",cls:"earth",type:"كوكب صخري",distance:"149.6 مليون كم",year:"365.25 يوم",day:"23 ساعة و56 دقيقة",moons:["القمر"],desc:"الكوكب الثالث من الشمس والموطن الوحيد المعروف للحياة."},
+ {name:"المريخ",en:"Mars",cls:"mars",type:"كوكب صخري",distance:"227.9 مليون كم",year:"687 يومًا",day:"24 ساعة و37 دقيقة",moons:["فوبوس","ديموس"],desc:"كوكب صخري أحمر توجد عليه براكين ووديان وآثار جيولوجية لمياه قديمة."},
+ {name:"المشتري",en:"Jupiter",cls:"jupiter",type:"عملاق غازي",distance:"778.5 مليون كم",year:"11.86 سنة",day:"9 ساعات و56 دقيقة",moons:["آيو","أوروبا","غانيميد","كاليستو"],desc:"أكبر كواكب النظام الشمسي، ويتكون أساسًا من الهيدروجين والهيليوم."},
+ {name:"زحل",en:"Saturn",cls:"saturn",type:"عملاق غازي",distance:"1.43 مليار كم",year:"29.45 سنة",day:"10.7 ساعات",moons:["تيتان","إنسيلادوس","ريا","يابيتوس"],desc:"عملاق غازي مشهور بحلقاته الواسعة المكونة من الجليد والصخور والغبار."},
+ {name:"أورانوس",en:"Uranus",cls:"uranus",type:"عملاق جليدي",distance:"2.87 مليار كم",year:"84 سنة",day:"17 ساعة",moons:["تيتانيا","أوبيرون","أرييل","أمبرييل"],desc:"عملاق جليدي أزرق مائل للأخضر بسبب الميثان في غلافه الجوي."},
+ {name:"نبتون",en:"Neptune",cls:"neptune",type:"عملاق جليدي",distance:"4.50 مليار كم",year:"164.8 سنة",day:"16 ساعة",moons:["تريتون","نيريد"],desc:"أبعد كواكب النظام الشمسي عن الشمس، ويتميز برياح قوية جدًا."}
+];
+
+var keywords = [
+ ["القمر","planets"],["فوبوس","planets"],["ديموس","planets"],["تيتان","planets"],
+ ["آيو","planets"],["أوروبا","missions"],["غانيميد","planets"],["كاليستو","planets"],
+ ["النجوم","stars"],["سيريوس","stars"],["الشمس","sun"],
+ ["المجرات","galaxies"],["مجرة","galaxies"],["أندروميدا","galaxies"],["درب التبانة","galaxies"],
+ ["الثقوب السوداء","blackholes"],["الثقب الأسود","blackholes"],["ثقب","blackholes"],
+ ["المهمات","missions"],["أرتميس","missions"],["بيرسيفيرانس","missions"],["باركر","missions"],
+ ["Parker","missions"],["Europa Clipper","missions"],["DART","missions"],
+ ["جيمس ويب","missions"],["James Webb","missions"],["ناسا","nasa"],["NASA","nasa"],
+ ["الكون","universe"],["الانفجار العظيم","universe"]
+];
+
+function normalize(value){
+ return String(value).toLowerCase().replace(/[أإآ]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/\s+/g," ").trim();
+}
+
+function showPage(id){
+ var i;
+ for(i=0;i<pages.length;i++){
+  var page=document.getElementById(pages[i]);
+  if(page){ page.classList.toggle("active", pages[i]===id); }
+ }
+ var navButtons=document.querySelectorAll("#nav button");
+ for(i=0;i<navButtons.length;i++){
+  navButtons[i].classList.toggle("active", navButtons[i].getAttribute("data-page")===id);
+ }
+ window.scrollTo(0,0);
+}
+
+function renderPlanets(){
+ var box=document.getElementById("planetCards");
+ var html="";
+ var i;
+ for(i=0;i<planets.length;i++){
+  var p=planets[i];
+  html += '<div class="card planet-card" data-index="'+i+'"><div class="planet-art"><div class="planet '+p.cls+'"></div></div><div class="card-body"><h3>'+p.name+' ('+p.en+')</h3><p>'+p.desc+'</p><p><b>النوع:</b> '+p.type+'</p><p><b>الأقمار:</b> '+p.moons.join(" — ")+'</p></div></div>';
+ }
+ box.innerHTML=html;
+ var cards=box.querySelectorAll(".planet-card");
+ for(i=0;i<cards.length;i++){
+  cards[i].addEventListener("click",function(){
+   openPlanet(Number(this.getAttribute("data-index")));
+  });
+ }
+}
+
+function openPlanet(index){
+ var p=planets[index];
+ var moons="";
+ var i;
+ for(i=0;i<p.moons.length;i++){
+  moons += '<span class="moon">🌕 '+p.moons[i]+'</span>';
+ }
+ document.getElementById("planetDetailContent").innerHTML =
+  '<div class="panel detail"><div class="detail-art"><div class="planet '+p.cls+'"></div></div><div><h2>🪐 '+p.name+'</h2><p>'+p.desc+'</p><div class="factgrid"><div class="fact"><strong>'+p.type+'</strong>النوع</div><div class="fact"><strong>'+p.distance+'</strong>متوسط البعد عن الشمس</div><div class="fact"><strong>'+p.year+'</strong>مدة السنة</div><div class="fact"><strong>'+p.day+'</strong>مدة اليوم</div></div></div></div>' +
+  '<div class="panel"><h2>🌕 الأقمار</h2>'+moons+'</div>' +
+  '<div class="panel"><h2>📚 معلومات</h2><p>'+p.desc+'</p></div>';
+ showPage("planetDetail");
+}
+
+function doSearch(){
+ var q=normalize(document.getElementById("search").value);
+ var box=document.getElementById("results");
+ box.classList.remove("show");
+ box.innerHTML="";
+ if(!q){return;}
+
+ var i;
+ for(i=0;i<planets.length;i++){
+  if(normalize(planets[i].name).indexOf(q)!==-1 || normalize(planets[i].en).indexOf(q)!==-1){
+   var index=i;
+   box.innerHTML='<h3>🔎 '+planets[i].name+'</h3><p>'+planets[i].desc+'</p><button class="btn" id="openSearchPlanet">فتح التفاصيل</button>';
+   box.classList.add("show");
+   document.getElementById("openSearchPlanet").addEventListener("click",function(){openPlanet(index);});
+   return;
+  }
+ }
+ for(i=0;i<keywords.length;i++){
+  if(normalize(keywords[i][0]).indexOf(q)!==-1 || q.indexOf(normalize(keywords[i][0]))!==-1){
+   var target=keywords[i][1];
+   box.innerHTML='<h3>🔎 '+keywords[i][0]+'</h3><p>تم العثور على القسم المرتبط بهذا البحث.</p><button class="btn" id="openSearchPage">فتح القسم</button>';
+   box.classList.add("show");
+   document.getElementById("openSearchPage").addEventListener("click",function(){showPage(target);});
+   return;
+  }
+ }
+ box.innerHTML="<p>❌ لا توجد نتيجة. جرّب: المريخ، الأرض، زحل، ناسا، الشمس، أندروميدا.</p>";
+ box.classList.add("show");
+}
+
+document.addEventListener("DOMContentLoaded",function(){
+ var clickable=document.querySelectorAll("[data-page]");
+ var i;
+ for(i=0;i<clickable.length;i++){
+  clickable[i].addEventListener("click",function(){showPage(this.getAttribute("data-page"));});
+ }
+ renderPlanets();
+ document.getElementById("planetBack").addEventListener("click",function(){showPage("planets");});
+ document.getElementById("searchBtn").addEventListener("click",doSearch);
+ document.getElementById("search").addEventListener("keydown",function(e){if(e.key==="Enter"){doSearch();}});
+});
+</script>
+</body>
+</html>
